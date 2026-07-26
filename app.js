@@ -1,0 +1,28 @@
+const MENU=[
+{id:"scnd",name:"Smoked Chicken N' Dumplings",category:"Entrée",price:12},
+{id:"brunswick",name:"Brunswick Stew",category:"Entrée",price:15},
+{id:"french-onion",name:"French Onion Soup",category:"Starter",price:6},
+{id:"blossom",name:"Premium Smokehouse Blossom",category:"Appetizer",price:8},
+{id:"meat-sweats",name:"Meat Sweats Burger",category:"Signature Burger",price:10},
+{id:"honey-rolls",name:"Honey Rolls",category:"Side",price:1},
+{id:"lemonade",name:"Fresh-Squeezed Lemonade",category:"Drink",price:3},
+{id:"sweet-tea",name:"Southern Sweet Tea",category:"Drink",price:3},
+{id:"collard-greens",name:"Southern Collard Greens",category:"Side",price:6},
+{id:"burnt-ends",name:"Pitmaster's Burnt Ends",category:"Smokehouse Signature",price:6},
+{id:"ranch-water",name:"Ranch Water",category:"Alcoholic Drink",price:21}
+];
+const state={quantities:Object.fromEntries(MENU.map(i=>[i.id,0])),complimentaryRolls:0};
+const $=s=>document.querySelector(s),menuGrid=$("#menuGrid"),summaryLines=$("#summaryLines"),subtotalEl=$("#subtotal"),grandTotalEl=$("#grandTotal"),itemCountEl=$("#itemCount"),orderTypeEl=$("#orderType"),customerNameEl=$("#customerName"),rollNoticeEl=$("#rollNotice"),freeRollRowEl=$("#freeRollRow"),copyStatusEl=$("#copyStatus");
+const money=v=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(v);
+const esc=v=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+function renderMenu(){menuGrid.innerHTML=MENU.map(i=>`<article class="menu-item"><div><h3>${esc(i.name)}</h3><div class="menu-meta"><span>${esc(i.category)}</span><span>•</span><span class="menu-price">${money(i.price)}</span></div></div><div class="quantity-control"><button data-action="decrease" data-id="${i.id}">−</button><span class="quantity" id="qty-${i.id}">0</span><button data-action="increase" data-id="${i.id}">+</button></div></article>`).join("")}
+function paidLines(){return MENU.map(i=>({...i,quantity:state.quantities[i.id],lineTotal:state.quantities[i.id]*i.price})).filter(i=>i.quantity>0)}
+function updateDineIn(){const dine=orderTypeEl.value==="dinein";state.complimentaryRolls=dine?1:0;rollNoticeEl.classList.toggle("hidden",!dine);freeRollRowEl.classList.toggle("hidden",!dine);renderSummary()}
+function updateQuantity(id,change){state.quantities[id]=Math.max(0,(state.quantities[id]||0)+change);$("#qty-"+CSS.escape(id)).textContent=state.quantities[id];renderSummary()}
+function renderSummary(){const lines=paidLines(),count=lines.reduce((s,l)=>s+l.quantity,0)+state.complimentaryRolls,total=lines.reduce((s,l)=>s+l.lineTotal,0);itemCountEl.textContent=`${count} ${count===1?"item":"items"}`;subtotalEl.textContent=grandTotalEl.textContent=money(total);const out=lines.map(l=>`<div class="summary-line"><div><strong>${l.quantity} × ${esc(l.name)}</strong><small>${money(l.price)} each</small></div><strong>${money(l.lineTotal)}</strong></div>`);if(state.complimentaryRolls)out.push(`<div class="summary-line"><div><strong>1 × Honey Rolls</strong><small>Complimentary dine-in item</small></div><strong>${money(0)}</strong></div>`);summaryLines.innerHTML=out.length?out.join(""):'<p class="empty-message">No items have been added yet.</p>';saveDraft()}
+function receipt(){const lines=paidLines(),total=lines.reduce((s,l)=>s+l.lineTotal,0),customer=customerNameEl.value.trim()||"Walk-in",type=orderTypeEl.value==="dinein"?"Dine-in":"Takeout",out=["THE SMOKEHOUSE","BBQ & SOUTHERN KITCHEN","",`Order: ${customer}`,`Type: ${type}`,"------------------------------"];lines.forEach(l=>out.push(`${l.quantity}x ${l.name} — ${money(l.lineTotal)}`));if(state.complimentaryRolls)out.push("1x Honey Rolls — COMPLIMENTARY");out.push("------------------------------",`TOTAL: ${money(total)}`);return out.join("\n")}
+async function copyOrder(){if(!paidLines().length&&!state.complimentaryRolls){copyStatusEl.textContent="Add at least one item first.";return}try{await navigator.clipboard.writeText(receipt())}catch{const t=document.createElement("textarea");t.value=receipt();document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}copyStatusEl.textContent="Order copied to clipboard.";setTimeout(()=>copyStatusEl.textContent="",2500)}
+function clearOrder(){MENU.forEach(i=>{state.quantities[i.id]=0;const el=$("#qty-"+CSS.escape(i.id));if(el)el.textContent="0"});customerNameEl.value="";orderTypeEl.value="takeout";state.complimentaryRolls=0;rollNoticeEl.classList.add("hidden");freeRollRowEl.classList.add("hidden");localStorage.removeItem("smokehouse-order-draft");copyStatusEl.textContent="";renderSummary()}
+function saveDraft(){localStorage.setItem("smokehouse-order-draft",JSON.stringify({customerName:customerNameEl.value,orderType:orderTypeEl.value,quantities:state.quantities}))}
+function loadDraft(){try{const d=JSON.parse(localStorage.getItem("smokehouse-order-draft")||"null");if(!d)return;customerNameEl.value=d.customerName||"";orderTypeEl.value=d.orderType==="dinein"?"dinein":"takeout";MENU.forEach(i=>{const q=Number(d.quantities?.[i.id]);state.quantities[i.id]=Number.isInteger(q)&&q>0?q:0;$("#qty-"+CSS.escape(i.id)).textContent=state.quantities[i.id]});updateDineIn()}catch{localStorage.removeItem("smokehouse-order-draft")}}
+menuGrid.addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(!b)return;updateQuantity(b.dataset.id,b.dataset.action==="increase"?1:-1)});orderTypeEl.addEventListener("change",updateDineIn);customerNameEl.addEventListener("input",saveDraft);$("#clearOrder").addEventListener("click",clearOrder);$("#copyOrder").addEventListener("click",copyOrder);$("#printOrder").addEventListener("click",()=>window.print());renderMenu();loadDraft();renderSummary();
