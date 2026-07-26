@@ -350,3 +350,29 @@ footer {
   margin-top: 6px;
   min-height: 0;
 }
+
+
+/* Editable quantity field */
+.quantity-control {
+  grid-template-columns: 38px 58px 38px;
+}
+
+.quantity-input {
+  width: 58px;
+  height: 38px;
+  padding: 4px 6px;
+  text-align: center;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid #bda98a;
+  border-radius: 9px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  margin: 0;
+}

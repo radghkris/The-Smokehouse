@@ -53,7 +53,7 @@ function renderMenu() {
 
       <div class="quantity-control" aria-label="${escapeHtml(item.name)} quantity">
         <button type="button" data-action="decrease" data-id="${item.id}" aria-label="Remove one ${escapeHtml(item.name)}">−</button>
-        <span class="quantity" id="qty-${item.id}">0</span>
+        <input class="quantity-input" id="qty-${item.id}" data-id="${item.id}" type="number" min="0" step="1" value="0" inputmode="numeric" aria-label="${escapeHtml(item.name)} quantity">
         <button type="button" data-action="increase" data-id="${item.id}" aria-label="Add one ${escapeHtml(item.name)}">+</button>
       </div>
     </article>
@@ -63,7 +63,7 @@ function renderMenu() {
 function updateQuantity(id, change) {
   const current = state.quantities[id] ?? 0;
   state.quantities[id] = Math.max(0, current + change);
-  document.querySelector(`#qty-${CSS.escape(id)}`).textContent = state.quantities[id];
+  document.querySelector(`#qty-${CSS.escape(id)}`).value = state.quantities[id];
   renderSummary();
 }
 
@@ -150,12 +150,24 @@ async function copyOrder() {
 function clearOrder() {
   MENU.forEach(item => {
     state.quantities[item.id] = 0;
-    document.querySelector(`#qty-${CSS.escape(item.id)}`).textContent = "0";
+    document.querySelector(`#qty-${CSS.escape(item.id)}`).value = "0";
   });
 
   copyStatusEl.textContent = "";
   renderSummary();
 }
+
+menuGrid.addEventListener("input", event => {
+  const input = event.target.closest(".quantity-input");
+  if (!input) return;
+
+  const parsed = Number.parseInt(input.value, 10);
+  const safeQuantity = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+
+  state.quantities[input.dataset.id] = safeQuantity;
+  input.value = safeQuantity;
+  renderSummary();
+});
 
 menuGrid.addEventListener("click", event => {
   const button = event.target.closest("button[data-action]");
