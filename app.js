@@ -5,7 +5,7 @@ const MENU = [
   { id: "blossom", name: "Premium Smokehouse Blossom", category: "Appetizer", price: 30.00 },
   { id: "meat-sweats", name: "Meat Sweats Burger", category: "Signature Burger", price: 20.00 },
   { id: "collard-greens", name: "Southern Collard Greens", category: "Side", price: 20.00 },
-  { id: "burnt-ends", name: "Pitmaster's Burnt Ends", category: "Smokehouse Signature", price: 10.00 },
+  { id: "burnt-ends", name: "Pitmaster's Burnt Ends", category: "Smokehouse Signature", price: 20.00 },
   { id: "lemonade", name: "Fresh-Squeezed Lemonade", category: "Drink", price: 10.00 },
   { id: "ranch-water", name: "Ranch Water", category: "Alcoholic Drink", price: 36.00 }
 ];
