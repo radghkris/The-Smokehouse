@@ -9,11 +9,9 @@
 </head>
 <body>
   <header class="site-header">
-    <div>
-      <p class="eyebrow">BBQ & Southern Kitchen</p>
-      <h1>The Smokehouse</h1>
-      <p class="subtitle">Crew Order Pricer</p>
-    </div>
+    <p class="eyebrow">BBQ & Southern Kitchen</p>
+    <h1>The Smokehouse</h1>
+    <p class="subtitle">Crew Order Pricer</p>
   </header>
 
   <main class="app-shell">
@@ -21,12 +19,11 @@
       <div class="section-heading">
         <div>
           <h2>Menu</h2>
-          <p>Use + and − to build the order.</p>
+          <p>Use + and − or type the quantity directly.</p>
         </div>
         <button id="clearOrder" class="button button-secondary" type="button">Clear</button>
       </div>
-
-      <div id="menuGrid" class="menu-grid" aria-live="polite"></div>
+      <div id="menuGrid" class="menu-grid"></div>
     </section>
 
     <section class="summary card">
@@ -55,10 +52,7 @@
     </section>
   </main>
 
-  <footer>
-    <p>The Smokehouse • Mirror Park</p>
-  </footer>
-
+  <footer>The Smokehouse • Mirror Park</footer>
   <script src="app.js"></script>
 </body>
 </html>
