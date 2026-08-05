@@ -7,7 +7,13 @@ const MENU = [
   { id: "collard-greens", name: "Southern Collard Greens", category: "Side", price: 20.00 },
   { id: "burnt-ends", name: "Pitmaster's Burnt Ends", category: "Smokehouse Signature", price: 20.00 },
   { id: "lemonade", name: "Fresh-Squeezed Lemonade", category: "Drink", price: 10.00 },
-  { id: "ranch-water", name: "Ranch Water", category: "Alcoholic Drink", price: 36.00 }
+  { id: "ranch-water", name: "Ranch Water", category: "Alcoholic Drink", price: 36.00 },
+
+  { id: "cottontail-stew", name: "Creed's Cottontail Stew", category: "Entrée", price: 20.00 },
+  { id: "brisket-stack", name: "Smokehouse Brisket Stack", category: "Sandwich", price: 25.00 },
+  { id: "sun-brewed-tea", name: "Smokehouse Sun-Brewed Sweet Tea", category: "Drink", price: 25.00 },
+  { id: "buckshot-burger", name: "Bucky's Buckshot Burger", category: "Signature Burger", price: 30.00 },
+  { id: "buck-country-chili", name: "Buck Country Chili", category: "House Specialty", price: 30.00 }
 ];
 
 const state = {
